@@ -24,6 +24,7 @@
 
 namespace geosx
 {
+
 //*****************************************************************************
 /**
  * @brief Implements kernels for solving Laplace's equation.
@@ -241,6 +242,11 @@ protected:
   arrayView1d< real64 const > const m_primaryField;
 
 };
+
+using LaplaceFEMKernelFactory = finiteElement::KernelFactory< LaplaceFEMKernel,
+                                                              arrayView1d< globalIndex const > const &,
+                                                              globalIndex, CRSMatrixView< real64, globalIndex const > const &,
+                                                              arrayView1d< real64 > const &, string const & >;
 
 } // namespace geosx
 

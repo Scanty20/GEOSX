@@ -336,6 +336,10 @@ protected:
 };
 #undef UPDATE_STRESS
 
+using ExplicitSmallStrainFactory = finiteElement::KernelFactory< ExplicitSmallStrain,
+                                                                 real64,
+                                                                 string const & >;
+
 } // namespace SolidMechanicsLagrangianFEMKernels
 
 } // namespace geosx

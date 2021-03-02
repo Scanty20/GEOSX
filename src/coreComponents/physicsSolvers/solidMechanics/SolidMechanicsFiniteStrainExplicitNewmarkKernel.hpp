@@ -194,12 +194,12 @@ public:
 
     FE_TYPE::plusGradNajAij( dNdX, P, stack.fLocal );
   }
-
-
-
 };
 #undef UPDATE_STRESS
 
+using ExplicitFiniteStrainFactory = finiteElement::KernelFactory< ExplicitFiniteStrain,
+                                                                  real64,
+                                                                  string const & >;
 
 } // namespace SolidMechanicsLagrangianFEMKernels
 
