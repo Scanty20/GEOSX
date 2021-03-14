@@ -289,6 +289,7 @@ protected:
 
 };
 
+/// The factory used to construct a ImplicitNewmark kernel.
 using ImplicitNewmarkFactory = finiteElement::KernelFactory< ImplicitNewmark,
                                                              arrayView1d< globalIndex const > const &,
                                                              globalIndex,

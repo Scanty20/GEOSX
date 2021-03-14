@@ -137,6 +137,7 @@ using QuasiStaticPoroElastic = PoroElastic< SUBREGION_TYPE,
                                             FE_TYPE,
                                             QuasiStatic >;
 
+/// The factory used to construct a QuasiStaticPoroElastic kernel.
 using QuasiStaticPoroElasticFactory = finiteElement::KernelFactory< QuasiStaticPoroElastic,
                                                                     arrayView1d< globalIndex const > const &,
                                                                     globalIndex,

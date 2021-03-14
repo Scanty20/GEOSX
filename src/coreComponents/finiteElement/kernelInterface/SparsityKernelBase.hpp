@@ -185,7 +185,7 @@ public:
    * @brief Constructor.
    * @param inputDofNumber An array containing the input degree of freedom numbers.
    * @param rankOffset The global rank offset.
-   * @param inputSparsitypattern The local sparsity pattern.
+   * @param inputSparsityPattern The local sparsity pattern.
    */
   SparsityKernelFactory( arrayView1d< globalIndex const > const & inputDofNumber,
                          globalIndex const rankOffset,
@@ -199,9 +199,10 @@ public:
    * @brief Return a new instance of @c SparsityKernelBase specialized for @c KERNEL_TEMPLATE.
    * @tparam SUBREGION_TYPE The type of of @p elementSubRegion.
    * @tparam CONSTITUTIVE_TYPE The type of @p inputConstitutiveType.
-   * @tparam FE_TYPE The type of @p FE_TYPE.
+   * @tparam FE_TYPE The type of @p finiteElementSpace.
    * @param nodeManager The node manager.
    * @param edgeManager The edge manager.
+   * @param faceManager The face manager.
    * @param elementSubRegion The sub region on which to generate the sparsity.
    * @param finiteElementSpace The finite element space.
    * @param inputConstitutiveType The constitutive relation.

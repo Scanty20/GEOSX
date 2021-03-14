@@ -258,6 +258,12 @@ protected:
   FE_TYPE const & m_finiteElementSpace;
 };
 
+/**
+ * @class KernelFactory
+ * @brief Used to forward arguments to a class that implements the KernelBase interface.
+ * @tparam KERNEL_TYPE The template class to construct, should implement the KernelBase interface.
+ * @tparam ARGS The arguments used to construct a @p KERNEL_TYPE in addition to the standard arguments.
+ */
 template< template< typename SUBREGION_TYPE,
                     typename CONSTITUTIVE_TYPE,
                     typename FE_TYPE > class KERNEL_TYPE,
@@ -266,10 +272,27 @@ class KernelFactory
 {
 public:
 
+  /**
+   * @brief Initialize the factory.
+   * @param args The arguments used to construct a @p KERNEL_TYPE in addition to the standard arguments.
+   */
   KernelFactory( ARGS ... args ):
     m_args( args ... )
   {}
 
+  /**
+   * @brief Create a new kernel with the given standard arguments.
+   * @tparam SUBREGION_TYPE The type of @p elementSubRegion.
+   * @tparam CONSTITUTIVE_TYPE The type of @p inputConstitutiveType.
+   * @tparam FE_TYPE The type of @p finiteElementSpace.
+   * @param nodeManager The node manager.
+   * @param edgeManager The edge manager.
+   * @param faceManager The face manager.
+   * @param elementSubRegion The subregion to execute on.
+   * @param finiteElementSpace The finite element space.
+   * @param inputConstitutiveType The constitutive relation.
+   * @return A new kernel constructed with the given arguments and @c ARGS.
+   */
   template< typename SUBREGION_TYPE, typename CONSTITUTIVE_TYPE, typename FE_TYPE >
   KERNEL_TYPE< SUBREGION_TYPE, CONSTITUTIVE_TYPE, FE_TYPE > createKernel(
     NodeManager & nodeManager,
@@ -296,6 +319,7 @@ public:
   }
 
 private:
+  /// The arguments to append to the standard kernel constructor arguments.
   camp::tuple< ARGS ... > m_args;
 };
 
@@ -314,9 +338,8 @@ private:
  *   ConstitutivePassThru function which should have a specialization for CONSTITUTIVE_BASE implemented in
  *   order to perform the compile time dispatch.
  * @tparam SUBREGION_TYPE The type of subregion to loop over. TODO make this a parameter pack?
- * @tparam KERNEL_FACTORY The type of @p kernelFactory. KERNEL_FACTORY must define a method @c createKernel
- *   which takes a @c NodeManager, @c EdgeManager, @c FaceManager, @p SUBREGION_TYPE, a constitutive relation
- *   and a finite element object and creates a kernel which adheres to the KernelBase interface.
+ * @tparam KERNEL_FACTORY The type of @p kernelFactory, typically an instantiation of @c KernelFactory, and
+ *   must adhere to that interface.
  * @param mesh The MeshLevel object.
  * @param targetRegions The names of the target regions(of type @p SUBREGION_TYPE) to apply the @p KERNEL_TEMPLATE.
  * @param finiteElementName The name of the finite element.

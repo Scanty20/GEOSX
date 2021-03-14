@@ -472,6 +472,7 @@ protected:
   ArrayOfArraysView< localIndex const > const m_cellsToEmbeddedSurfaces;
 };
 
+/// The factory used to construct a QuasiStatic kernel.
 using QuasiStaticFactory = finiteElement::KernelFactory< QuasiStatic,
                                                          EmbeddedSurfaceSubRegion const &,
                                                          arrayView1d< globalIndex const > const &,

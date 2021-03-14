@@ -197,6 +197,7 @@ public:
 };
 #undef UPDATE_STRESS
 
+/// The factory used to construct a ExplicitFiniteStrain kernel.
 using ExplicitFiniteStrainFactory = finiteElement::KernelFactory< ExplicitFiniteStrain,
                                                                   real64,
                                                                   string const & >;

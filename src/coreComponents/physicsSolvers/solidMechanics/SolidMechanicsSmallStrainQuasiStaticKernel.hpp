@@ -326,6 +326,7 @@ protected:
 
 };
 
+/// The factory used to construct a QuasiStatic kernel.
 using QuasiStaticFactory = finiteElement::KernelFactory< QuasiStatic,
                                                          arrayView1d< globalIndex const > const &,
                                                          globalIndex,
