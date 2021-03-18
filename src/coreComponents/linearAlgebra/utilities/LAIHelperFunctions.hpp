@@ -32,6 +32,27 @@ namespace LAIHelperFunctions
 {
 
 /**
+ * @brief Create an identity matrix.
+ * @tparam MATRIX type of matrix
+ * @param n local size of the square identity matrix
+ * @param comm MPI communicator
+ * @param mat the output matrix
+ */
+template< typename MATRIX >
+void makeIdentity( localIndex const n,
+                   MPI_Comm const & comm,
+                   MATRIX & mat )
+{
+  mat.createWithLocalSize( n, 1, comm );
+  mat.open();
+  for( globalIndex i = mat.ilower(); i < mat.iupper(); ++i )
+  {
+    mat.insert( i, i, 1.0 );
+  }
+  mat.close();
+}
+
+/**
  * @brief Create a permutation matrix for a given nodal variable.
  * @tparam     MATRIX            the parallel matrix type
  * @param[in]  nodeManager       the node manager

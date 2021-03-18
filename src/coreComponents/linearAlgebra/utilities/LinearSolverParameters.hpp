@@ -64,7 +64,8 @@ struct LinearSolverParameters
     amg,       ///< Algebraic Multigrid
     mgr,       ///< Multigrid reduction (Hypre only)
     block,     ///< Block preconditioner
-    direct     ///< Direct solver as preconditioner
+    direct,    ///< Direct solver as preconditioner
+    multiscale ///< Multiscale preconditioner
   };
 
   integer logLevel = 0;     ///< Output level [0=none, 1=basic, 2=everything]
@@ -208,8 +209,8 @@ struct LinearSolverParameters
     enum class StrategyType : integer
     {
       invalid,                          ///< default value, to ensure solver sets something
-      compositionalMultiphaseFVM,       ///< finite volume compositional muliphase flow
-      compositionalMultiphaseHybridFVM, ///< hybrid finite volume compositional muliphase flow
+      compositionalMultiphaseFVM,       ///< finite volume compositional multiphase flow
+      compositionalMultiphaseHybridFVM, ///< hybrid finite volume compositional multiphase flow
       compositionalMultiphaseReservoir, ///< reservoir with finite volume compositional multiphase flow
       hydrofracture,                    ///< hydrofracture
       lagrangianContactMechanics,       ///< Lagrangian contact mechanics
@@ -237,6 +238,32 @@ struct LinearSolverParameters
     integer overlap = 0;   ///< Ghost overlap
   }
   dd;                      ///< Domain decomposition parameter struct
+
+  struct Multiscale
+  {
+    enum class Type
+    {
+      msrsb,   ///< Restricted Smoothing Based multiscale
+    };
+
+    Type type;                               ///< type of interpolation (e.g. "msrsb")
+    string fieldName;                        ///< populated by the physics solver, needed for access to dof index array
+    real64 coarseRatio = 100.0;              ///< coarsening ratio (of coarse-to-fine cells)
+    integer maxLevels = 2;                   ///< limit on total number of coarse levels
+    localIndex minLocalDof = 0;              ///< limit of coarsening on current rank (i.e. keep coarsening ratio 1 beyond)
+    globalIndex minGlobalDof = 0;            ///< limit of coarsening globally (i.e. trim the grid hierarchy)
+    AMG::PreOrPost preOrPostSmoothing = AMG::PreOrPost::both; ///< Pre and/or post smoothing [pre,post,both]
+    PrecondType smootherType = PrecondType::sgs;              ///< Smoother type
+    PrecondType coarseType = PrecondType::direct;             ///< Coarse solver type
+
+    struct MsRSB
+    {
+      integer maxSmoothingIter = 100; ///< max number of smoothing iterations
+      real64 smoothingTol = 1e-6;     ///< smoothing iteration convergence tolerance
+      real64 relaxation = 2.0 / 3.0;  /// relaxation parameter for Jacobi smoothing
+    } msrsb;
+  }
+  multiscale;
 };
 
 ENUM_STRINGS( LinearSolverParameters::SolverType,
@@ -262,7 +289,8 @@ ENUM_STRINGS( LinearSolverParameters::PrecondType,
               "amg",
               "mgr",
               "block",
-              "direct" )
+              "direct",
+              "multiscale" )
 
 ENUM_STRINGS( LinearSolverParameters::Direct::ColPerm,
               "none",
@@ -320,6 +348,9 @@ ENUM_STRINGS( LinearSolverParameters::AMG::CoarseType,
 ENUM_STRINGS( LinearSolverParameters::AMG::NullSpaceType,
               "constantModes",
               "rigidBodyModes" )
+
+ENUM_STRINGS( LinearSolverParameters::Multiscale::Type,
+              "msrsb" )
 
 } /* namespace geosx */
 

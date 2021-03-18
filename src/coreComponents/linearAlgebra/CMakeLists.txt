@@ -21,6 +21,9 @@ set( linearAlgebra_headers
      solvers/PreconditionerJacobi.hpp
      solvers/PreconditionerBlockJacobi.hpp
      solvers/SeparateComponentPreconditioner.hpp
+     solvers/multiscale/MultiscaleStrategy.hpp
+     solvers/multiscale/MsRSBStrategy.hpp
+     solvers/multiscale/PreconditionerMultiscale.hpp
      utilities/Arnoldi.hpp
      utilities/BlockOperatorView.hpp
      utilities/BlockOperatorWrapper.hpp
@@ -49,6 +52,9 @@ set( linearAlgebra_sources
      solvers/GmresSolver.cpp
      solvers/KrylovSolver.cpp
      solvers/SeparateComponentPreconditioner.cpp
+     solvers/multiscale/MultiscaleStrategy.cpp
+     solvers/multiscale/MsRSBStrategy.cpp
+     solvers/multiscale/PreconditionerMultiscale.cpp
      DofManager.cpp )
 
 if( BUILD_OBJ_LIBS )

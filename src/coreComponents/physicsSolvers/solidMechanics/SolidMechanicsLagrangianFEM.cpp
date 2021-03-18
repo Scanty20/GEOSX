@@ -29,6 +29,7 @@
 #include "constitutive/contact/ContactRelationBase.hpp"
 #include "finiteElement/FiniteElementDiscretizationManager.hpp"
 #include "finiteElement/Kinematics.h"
+#include "linearAlgebra/solvers/multiscale/PreconditionerMultiscale.hpp"
 #include "LvArray/src/output.hpp"
 #include "managers/DomainPartition.hpp"
 #include "managers/GeosxState.hpp"
@@ -151,6 +152,7 @@ void SolidMechanicsLagrangianFEM::postProcessInput()
   linParams.isSymmetric = true;
   linParams.dofsPerNode = 3;
   linParams.amg.separateComponents = true;
+  linParams.multiscale.fieldName = keys::TotalDisplacement;
 }
 
 SolidMechanicsLagrangianFEM::~SolidMechanicsLagrangianFEM()
@@ -1012,7 +1014,13 @@ void SolidMechanicsLagrangianFEM::setupSystem( DomainPartition & domain,
   sparsityPattern.compress();
   localMatrix.assimilate< parallelDevicePolicy<> >( std::move( sparsityPattern ) );
 
-
+  if( !m_precond && m_linearSolverParameters.get().solverType != LinearSolverParameters::SolverType::direct )
+  {
+    if( m_linearSolverParameters.get().preconditionerType == LinearSolverParameters::PrecondType::multiscale )
+    {
+      m_precond = std::make_unique< PreconditionerMultiscale< LAInterface > >( m_linearSolverParameters.get(), mesh );
+    }
+  }
 }
 
 void SolidMechanicsLagrangianFEM::assembleSystem( real64 const GEOSX_UNUSED_PARAM( time_n ),
