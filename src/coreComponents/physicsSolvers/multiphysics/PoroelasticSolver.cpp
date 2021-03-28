@@ -539,7 +539,7 @@ real64 PoroelasticSolver::calculateResidualNorm( DomainPartition const & domain,
 
 void PoroelasticSolver::createPreconditioner()
 {
-  if( m_linearSolverParameters.get().preconditionerType == LinearSolverParameters::PreconditionerType::block )
+  if( m_linearSolverParameters.get().preconditionerType == LinearSolverParameters::PrecondType::block )
   {
     auto precond = std::make_unique< BlockPreconditioner< LAInterface > >( BlockShapeOption::UpperTriangular,
                                                                            SchurComplementOption::RowsumDiagonalProbing,

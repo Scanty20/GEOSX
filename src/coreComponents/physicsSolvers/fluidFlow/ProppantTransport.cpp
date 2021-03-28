@@ -19,7 +19,6 @@
 #include "ProppantTransport.hpp"
 
 #include "managers/FieldSpecification/FieldSpecificationManager.hpp"
-#include "codingUtilities/Utilities.hpp"
 #include "common/DataTypes.hpp"
 #include "common/TimingMacros.hpp"
 #include "constitutive/ConstitutiveManager.hpp"
@@ -470,6 +469,7 @@ void ProppantTransport::postStepUpdate( real64 const & time_n,
     updateProppantMobility( subRegion );
   } );
 
+  real64 const maxProppantConcentration = m_maxProppantConcentration;
   forTargetSubRegions( mesh, [&]( localIndex const, ElementSubRegionBase & subRegion )
   {
 
@@ -479,10 +479,10 @@ void ProppantTransport::postStepUpdate( real64 const & time_n,
 
     forAll< parallelDevicePolicy<> >( subRegion.size(), [=] GEOSX_HOST_DEVICE ( localIndex const ei )
     {
-      if( proppantConc[ei] >= m_maxProppantConcentration || packVf[ei] >= 1.0 )
+      if( proppantConc[ei] >= maxProppantConcentration || packVf[ei] >= 1.0 )
       {
         packVf[ei] = 1.0;
-        proppantConc[ei] = m_maxProppantConcentration;
+        proppantConc[ei] = maxProppantConcentration;
       }
 
     } );

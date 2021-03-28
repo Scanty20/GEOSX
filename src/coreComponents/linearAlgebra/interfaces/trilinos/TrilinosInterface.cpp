@@ -17,7 +17,11 @@
  */
 
 #include "TrilinosInterface.hpp"
+
+#include "linearAlgebra/interfaces/direct/SuiteSparse.hpp"
+#include "linearAlgebra/interfaces/direct/SuperLUDist.hpp"
 #include "linearAlgebra/interfaces/trilinos/TrilinosPreconditioner.hpp"
+#include "linearAlgebra/interfaces/trilinos/TrilinosSolver.hpp"
 
 namespace geosx
 {
@@ -28,6 +32,26 @@ void TrilinosInterface::initialize( int & GEOSX_UNUSED_PARAM( argc ),
 
 void TrilinosInterface::finalize()
 {}
+
+std::unique_ptr< LinearSolverBase< TrilinosInterface > >
+TrilinosInterface::createSolver( LinearSolverParameters params )
+{
+  if( params.solverType == LinearSolverParameters::SolverType::direct )
+  {
+    if( params.direct.parallel )
+    {
+      return std::make_unique< SuperLUDist< TrilinosInterface > >( std::move( params ) );
+    }
+    else
+    {
+      return std::make_unique< SuiteSparse< TrilinosInterface > >( std::move( params ) );
+    }
+  }
+  else
+  {
+    return std::make_unique< TrilinosSolver >( std::move( params ) );
+  }
+}
 
 std::unique_ptr< PreconditionerBase< TrilinosInterface > >
 TrilinosInterface::createPreconditioner( LinearSolverParameters params )

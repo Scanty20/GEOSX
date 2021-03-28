@@ -17,18 +17,17 @@
  * @brief This test file is part of the ctest suite and tests the DofManager functionality.
  */
 
-#include "gtest/gtest.h"
-
 #include "codingUtilities/UnitTestUtilities.hpp"
 #include "common/DataTypes.hpp"
 #include "linearAlgebra/DofManager.hpp"
+#include "linearAlgebra/unitTests/testDofManagerUtils.hpp"
+#include "linearAlgebra/unitTests/testLinearAlgebraUtils.hpp"
 #include "managers/initialization.hpp"
 #include "managers/ProblemManager.hpp"
 #include "managers/DomainPartition.hpp"
-#include "meshUtilities/MeshManager.hpp"
 #include "mpiCommunications/CommunicationTools.hpp"
 
-#include "testDofManagerUtils.hpp"
+#include "gtest/gtest.h"
 
 #include <memory>
 
@@ -78,7 +77,7 @@ protected:
 
   void SetUp() override
   {
-    setupProblemFromXML( &state.getProblemManager(), xmlInput );
+    geosx::testing::setupProblemFromXML( &state.getProblemManager(), xmlInput );
     mesh = &state.getProblemManager().getDomainPartition().getMeshBody( 0 ).getMeshLevel( 0 );
     dofManager.setMesh( state.getProblemManager().getDomainPartition(), 0, 0 );
   }

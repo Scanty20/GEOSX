@@ -21,8 +21,8 @@
 
 #include "linearAlgebra/interfaces/petsc/PetscVector.hpp"
 #include "linearAlgebra/interfaces/petsc/PetscMatrix.hpp"
-#include "linearAlgebra/interfaces/petsc/PetscSolver.hpp"
-#include "linearAlgebra/solvers/PreconditionerBase.hpp"
+#include "linearAlgebra/common/PreconditionerBase.hpp"
+#include "linearAlgebra/common/LinearSolverBase.hpp"
 
 #include <memory>
 
@@ -53,6 +53,14 @@ struct PetscInterface
   static void finalize();
 
   /**
+   * @brief Create a petsc-based solver object.
+   * @param params the preconditioner parameters
+   * @return owning pointer to the newly created solver
+   */
+  static std::unique_ptr< LinearSolverBase< PetscInterface > >
+  createSolver( LinearSolverParameters params );
+
+  /**
    * @brief Create a PETSc-based preconditioner object.
    * @param params the parameters for preconditioner
    * @return owning pointer to the newly created preconditioner
@@ -74,8 +82,6 @@ struct PetscInterface
   using ParallelMatrix = PetscMatrix;
   /// Alias for PetscVector
   using ParallelVector = PetscVector;
-  /// Alias for PetscSolver
-  using LinearSolver   = PetscSolver;
 };
 
 } /* namespace geosx */

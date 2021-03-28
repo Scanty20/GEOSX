@@ -1121,7 +1121,7 @@ real64 LagrangianContactSolver::calculateResidualNorm( DomainPartition const & d
 
 void LagrangianContactSolver::createPreconditioner( DomainPartition const & domain )
 {
-  if( m_linearSolverParameters.get().preconditionerType == LinearSolverParameters::PreconditionerType::block )
+  if( m_linearSolverParameters.get().preconditionerType == LinearSolverParameters::PrecondType::block )
   {
     // TODO: move among inputs (xml)
     string const leadingBlockApproximation = "blockJacobi";
@@ -1143,7 +1143,7 @@ void LagrangianContactSolver::createPreconditioner( DomainPartition const & doma
 
       // Using LAI implementation of Jacobi preconditioner
       LinearSolverParameters tracParams;
-      tracParams.preconditionerType = LinearSolverParameters::PreconditionerType::jacobi;
+      tracParams.preconditionerType = LinearSolverParameters::PrecondType::jacobi;
       tracPrecond = LAInterface::createPreconditioner( tracParams );
     }
     else if( leadingBlockApproximation == "blockJacobi" )
@@ -1163,12 +1163,12 @@ void LagrangianContactSolver::createPreconditioner( DomainPartition const & doma
                          { { viewKeyStruct::tractionString(), 0, 3 } },
                          std::move( tracPrecond ) );
 
-    if( mechParams.amg.nullSpaceType == "rigidBodyModes" )
+    if( mechParams.amg.nullSpaceType == LinearSolverParameters::AMG::NullSpaceType::rigidBodyModes )
     {
       if( m_solidSolver->getRigidBodyModes().empty() )
       {
         MeshLevel const & mesh = domain.getMeshBody( 0 ).getMeshLevel( 0 );
-        LAIHelperFunctions::ComputeRigidBodyModes( mesh,
+        LAIHelperFunctions::computeRigidBodyModes( mesh,
                                                    m_dofManager,
                                                    { keys::TotalDisplacement },
                                                    m_solidSolver->getRigidBodyModes() );

@@ -17,7 +17,11 @@
  */
 
 #include "PetscInterface.hpp"
+
+#include "linearAlgebra/interfaces/direct/SuiteSparse.hpp"
+#include "linearAlgebra/interfaces/direct/SuperLUDist.hpp"
 #include "linearAlgebra/interfaces/petsc/PetscPreconditioner.hpp"
+#include "linearAlgebra/interfaces/petsc/PetscSolver.hpp"
 
 #include <petscsys.h>
 
@@ -35,6 +39,26 @@ void PetscInterface::initialize( int & GEOSX_UNUSED_PARAM( argc ), char * * & GE
 void PetscInterface::finalize()
 {
   PetscFinalize();
+}
+
+std::unique_ptr< LinearSolverBase< PetscInterface > >
+PetscInterface::createSolver( LinearSolverParameters params )
+{
+  if( params.solverType == LinearSolverParameters::SolverType::direct )
+  {
+    if( params.direct.parallel )
+    {
+      return std::make_unique< SuperLUDist< PetscInterface > >( std::move( params ) );
+    }
+    else
+    {
+      return std::make_unique< SuiteSparse< PetscInterface > >( std::move( params ) );
+    }
+  }
+  else
+  {
+    return std::make_unique< PetscSolver >( std::move( params ) );
+  }
 }
 
 std::unique_ptr< PreconditionerBase< PetscInterface > >

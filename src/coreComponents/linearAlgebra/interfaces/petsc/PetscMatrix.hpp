@@ -20,8 +20,9 @@
 #define GEOSX_LINEARALGEBRA_INTERFACES_PETSCSPARSEMATRIX_HPP_
 
 #include "common/DataTypes.hpp"
-#include "PetscVector.hpp"
-#include "linearAlgebra/interfaces/LinearOperator.hpp"
+#include "linearAlgebra/interfaces/petsc/PetscVector.hpp"
+#include "linearAlgebra/interfaces/petsc/PetscExport.hpp"
+#include "linearAlgebra/common/LinearOperator.hpp"
 #include "linearAlgebra/interfaces/MatrixBase.hpp"
 
 /**
@@ -51,6 +52,9 @@ public:
 
   /// Compatible vector type
   using Vector = PetscVector;
+
+  /// Assoicated exporter type
+  using Export = PetscExport;
 
   /// Alias for PETSc matrix struct pointer
   using Mat = struct _p_Mat *;
@@ -92,6 +96,8 @@ public:
   using MatrixBase::modifiable;
   using MatrixBase::ready;
   using MatrixBase::residual;
+  using MatrixBase::setDofManager;
+  using MatrixBase::dofManager;
 
   virtual void createWithLocalSize( localIndex const localRows,
                                     localIndex const localCols,
@@ -159,27 +165,15 @@ public:
 
   virtual void add( arraySlice1d< globalIndex const > const & rowIndices,
                     arraySlice1d< globalIndex const > const & colIndices,
-                    arraySlice2d< real64 const, MatrixLayout::ROW_MAJOR > const & values ) override;
+                    arraySlice2d< real64 const > const & values ) override;
 
   virtual void set( arraySlice1d< globalIndex const > const & rowIndices,
                     arraySlice1d< globalIndex const > const & colIndices,
-                    arraySlice2d< real64 const, MatrixLayout::ROW_MAJOR > const & values ) override;
+                    arraySlice2d< real64 const > const & values ) override;
 
   virtual void insert( arraySlice1d< globalIndex const > const & rowIndices,
                        arraySlice1d< globalIndex const > const & colIndices,
-                       arraySlice2d< real64 const, MatrixLayout::ROW_MAJOR > const & values ) override;
-
-  virtual void add( arraySlice1d< globalIndex const > const & rowIndices,
-                    arraySlice1d< globalIndex const > const & colIndices,
-                    arraySlice2d< real64 const, MatrixLayout::COL_MAJOR > const & values ) override;
-
-  virtual void set( arraySlice1d< globalIndex const > const & rowIndices,
-                    arraySlice1d< globalIndex const > const & colIndices,
-                    arraySlice2d< real64 const, MatrixLayout::COL_MAJOR > const & values ) override;
-
-  virtual void insert( arraySlice1d< globalIndex const > const & rowIndices,
-                       arraySlice1d< globalIndex const > const & colIndices,
-                       arraySlice2d< real64 const, MatrixLayout::COL_MAJOR > const & values ) override;
+                       arraySlice2d< real64 const > const & values ) override;
 
   virtual void add( globalIndex const * rowIndices,
                     globalIndex const * colIndices,

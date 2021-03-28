@@ -2,11 +2,13 @@
 # Specify list of tests
 #
 set( LAI_tests
-     testLAOperations.cpp 
-     testArrayLAOperations.cpp
-     testKrylovSolvers.cpp
-     testDofManager.cpp
-     testLAIHelperFunctions.cpp)
+     BlasLapack
+     Matrices
+     Vectors
+     ExternalSolvers
+     KrylovSolvers
+     DofManager
+     LAIHelperFunctions )
 
 set( nranks 2 )
 
@@ -33,20 +35,18 @@ if ( ENABLE_CUDA )
   set( dependencyList ${dependencyList} cuda )
 endif()
 
-foreach(test ${LAI_tests})
-  get_filename_component( test_name ${test} NAME_WE )
-
-  blt_add_executable( NAME ${test_name}  
-                      SOURCES ${test}
+foreach(test_name ${LAI_tests})
+  set( exec_name test${test_name} )
+  blt_add_executable( NAME ${exec_name}
+                      SOURCES ${exec_name}.cpp
                       OUTPUT_DIR ${TEST_OUTPUT_DIRECTORY}
                       DEPENDS_ON ${dependencyList} )
-
 if ( ENABLE_MPI )
-  blt_add_test( NAME ${test_name}
-                COMMAND ${test_name} -x ${nranks}
+  blt_add_test( NAME testLinearAlgebra_${test_name}
+                COMMAND ${exec_name} -x ${nranks}
                 NUM_MPI_TASKS ${nranks} )
 else()
-  blt_add_test( NAME ${test_name}
-                COMMAND ${test_name} )
+  blt_add_test( NAME testLinearAlgebra_${test_name}
+                COMMAND ${exec_name} )
 endif()
 endforeach()

@@ -13,17 +13,17 @@
  */
 
 /**
- * @file testDenseLAOperations.cpp
+ * @file testBlasLapack.cpp
  */
-
-#include "gtest/gtest.h"
-
-#include <numeric>
 
 #include "common/DataTypes.hpp"
 #include "managers/initialization.hpp"
 #include "rajaInterface/GEOS_RAJA_Interface.hpp"
-#include "linearAlgebra/interfaces/BlasLapackLA.hpp"
+#include "linearAlgebra/interfaces/dense/BlasLapackLA.hpp"
+
+#include "gtest/gtest.h"
+
+#include <numeric>
 
 using namespace geosx;
 

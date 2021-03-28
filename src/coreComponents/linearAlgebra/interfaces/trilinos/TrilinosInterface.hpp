@@ -21,8 +21,8 @@
 
 #include "linearAlgebra/interfaces/trilinos/EpetraVector.hpp"
 #include "linearAlgebra/interfaces/trilinos/EpetraMatrix.hpp"
-#include "linearAlgebra/interfaces/trilinos/TrilinosSolver.hpp"
-#include "linearAlgebra/solvers/PreconditionerBase.hpp"
+#include "linearAlgebra/common/PreconditionerBase.hpp"
+#include "linearAlgebra/common/LinearSolverBase.hpp"
 
 #include <memory>
 
@@ -49,6 +49,14 @@ struct TrilinosInterface
   static void finalize();
 
   /**
+   * @brief Create a petsc-based solver object.
+   * @param params the preconditioner parameters
+   * @return owning pointer to the newly created solver
+   */
+  static std::unique_ptr< LinearSolverBase< TrilinosInterface > >
+  createSolver( LinearSolverParameters params );
+
+  /**
    * @brief Create a Trilinos-based preconditioner object.
    * @param params the preconditioner parameters
    * @return an owning pointer to the newly created preconditioner
@@ -70,8 +78,6 @@ struct TrilinosInterface
   using ParallelMatrix = EpetraMatrix;
   /// Alias for EpetraVector
   using ParallelVector = EpetraVector;
-  /// Alias for TrilinosSolver
-  using LinearSolver   = TrilinosSolver;
 };
 
 } /* namespace geosx */

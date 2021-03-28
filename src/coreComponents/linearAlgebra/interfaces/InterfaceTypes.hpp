@@ -49,8 +49,6 @@ using LAInterface = CONCAT( GEOSX_LA_INTERFACE, Interface );
 using ParallelMatrix = LAInterface::ParallelMatrix;
 /// Alias for ParallelVector
 using ParallelVector = LAInterface::ParallelVector;
-/// Alias for LinearSolver
-using LinearSolver   = LAInterface::LinearSolver;
 
 /**
  * @brief High level interface to call the proper LAI initialize function.

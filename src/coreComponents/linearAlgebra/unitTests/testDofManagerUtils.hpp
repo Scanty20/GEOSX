@@ -16,8 +16,11 @@
  * @file testDofManagerUtils.hpp
  */
 
-#ifndef GEOSX_LINEARALGEBRA_UNITTESTS_TESTDOFMANAGERUTILS_HPP
-#define GEOSX_LINEARALGEBRA_UNITTESTS_TESTDOFMANAGERUTILS_HPP
+#ifndef GEOSX_LINEARALGEBRA_UNITTESTS_TESTDOFMANAGERUTILS_HPP_
+#define GEOSX_LINEARALGEBRA_UNITTESTS_TESTDOFMANAGERUTILS_HPP_
+
+#include "common/DataTypes.hpp"
+#include "mesh/MeshLevel.hpp"
 
 #include <gtest/gtest.h>
 
@@ -26,45 +29,6 @@ namespace geosx
 
 namespace testing
 {
-
-/**
- * @brief Set up a problem from an xml input buffer
- * @param problemManager the target problem manager
- * @param xmlInput       the XML input string
- */
-void setupProblemFromXML( ProblemManager * const problemManager, char const * const xmlInput )
-{
-  xmlWrapper::xmlDocument xmlDocument;
-  xmlWrapper::xmlResult xmlResult = xmlDocument.load_buffer( xmlInput, strlen( xmlInput ) );
-  if( !xmlResult )
-  {
-    GEOSX_LOG_RANK_0( "XML parsed with errors!" );
-    GEOSX_LOG_RANK_0( "Error description: " << xmlResult.description());
-    GEOSX_LOG_RANK_0( "Error offset: " << xmlResult.offset );
-  }
-
-  int mpiSize = MpiWrapper::commSize( MPI_COMM_GEOSX );
-  dataRepository::Group & commandLine =
-    problemManager->getGroup< dataRepository::Group >( problemManager->groupKeys.commandLine );
-  commandLine.registerWrapper< integer >( problemManager->viewKeys.xPartitionsOverride.key() ).
-    setApplyDefaultValue( mpiSize );
-
-  xmlWrapper::xmlNode xmlProblemNode = xmlDocument.child( "Problem" );
-  problemManager->processInputFileRecursive( xmlProblemNode );
-
-  // Open mesh levels
-  DomainPartition & domain = problemManager->getDomainPartition();
-  MeshManager & meshManager = problemManager->getGroup< MeshManager >( problemManager->groupKeys.meshManager );
-  meshManager.generateMeshLevels( domain );
-
-  ElementRegionManager & elementManager = domain.getMeshBody( 0 ).getMeshLevel( 0 ).getElemManager();
-  xmlWrapper::xmlNode topLevelNode = xmlProblemNode.child( elementManager.getName().c_str() );
-  elementManager.processInputFileRecursive( topLevelNode );
-  elementManager.postProcessInputRecursive();
-
-  problemManager->problemSetup();
-  problemManager->applyInitialConditions();
-}
 
 /**
  * @brief Get a region list from an input list (empty region lists to mean all regions in the mesh).
@@ -492,8 +456,7 @@ void makeSparsityFlux( MeshLevel const * const mesh,
   } );
 }
 
-}
+} // namespace testing
+} // namespace geosx
 
-}
-
-#endif //GEOSX_LINEARALGEBRA_UNITTESTS_TESTDOFMANAGERUTILS_HPP
+#endif //GEOSX_LINEARALGEBRA_UNITTESTS_TESTDOFMANAGERUTILS_HPP_

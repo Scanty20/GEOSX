@@ -19,7 +19,7 @@
 #ifndef GEOSX_LINEARALGEBRA_INTERFACES_VECTORBASE_HPP_
 #define GEOSX_LINEARALGEBRA_INTERFACES_VECTORBASE_HPP_
 
-#include "linearAlgebra/common.hpp"
+#include "linearAlgebra/common/common.hpp"
 #include "mpiCommunications/MpiWrapper.hpp"
 #include "rajaInterface/GEOS_RAJA_Interface.hpp"
 
@@ -422,11 +422,9 @@ protected:
    */
   virtual void extract( arrayView1d< real64 > const & localVector ) const
   {
+    GEOSX_LAI_ASSERT_EQ( localSize(), localVector.size() );
     real64 const * const data = extractLocalVector();
-    forAll< parallelHostPolicy >( localSize(), [=] ( localIndex const k )
-    {
-      localVector[k] = data[k];
-    } );
+    std::copy( data, data + localVector.size(), localVector.data() );
   }
 
   /**
